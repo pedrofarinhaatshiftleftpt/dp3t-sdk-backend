@@ -61,7 +61,7 @@ public class DebugController {
             @RequestHeader(value = "X-Device-Name", required = true) String deviceName,
             @AuthenticationPrincipal Object principal) throws InvalidDateException {
         var now = Instant.now().toEpochMilli();
-        if (!this.validateRequest.isValid(principal)) {
+        if (!this.validateRequest.isValid(principal, "exposed")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         List<GaenKey> nonFakeKeys = new ArrayList<>();

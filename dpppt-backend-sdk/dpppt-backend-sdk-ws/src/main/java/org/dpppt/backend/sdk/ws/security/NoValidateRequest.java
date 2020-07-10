@@ -21,7 +21,7 @@ import org.dpppt.backend.sdk.model.gaen.GaenUnit;
 public class NoValidateRequest implements ValidateRequest {
 
 	@Override
-	public boolean isValid(Object authObject) {
+	public boolean isValid(Object authObject, String scope) {
 		return true;
 	}
 

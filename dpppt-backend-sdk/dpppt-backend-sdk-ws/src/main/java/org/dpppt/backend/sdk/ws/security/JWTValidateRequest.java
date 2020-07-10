@@ -21,10 +21,10 @@ import org.springframework.security.oauth2.jwt.Jwt;
 public class JWTValidateRequest implements ValidateRequest {
 
 	@Override
-	public boolean isValid(Object authObject) {
+	public boolean isValid(Object authObject, String scope) {
 		if (authObject instanceof Jwt) {
 			Jwt token = (Jwt) authObject;
-			return token.containsClaim("scope") && token.getClaim("scope").equals("exposed");
+			return token.containsClaim("scope") && token.getClaim("scope").equals(scope);
 		}
 		return false;
 	}

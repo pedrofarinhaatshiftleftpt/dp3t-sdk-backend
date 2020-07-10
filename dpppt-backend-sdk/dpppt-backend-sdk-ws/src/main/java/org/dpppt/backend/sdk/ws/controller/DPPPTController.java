@@ -105,7 +105,7 @@ public class DPPPTController {
                     String userAgent,
 			@AuthenticationPrincipal Object principal) throws InvalidDateException {
 		long now = System.currentTimeMillis();
-		if (!this.validateRequest.isValid(principal)) {
+		if (!this.validateRequest.isValid(principal, "exposed")) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 		}
 		if (!validationUtils.isValidBase64Key(exposeeRequest.getKey())) {
@@ -146,7 +146,7 @@ public class DPPPTController {
                     String userAgent,
 			@AuthenticationPrincipal Object principal) throws InvalidDateException {
 		long now = System.currentTimeMillis();
-		if (!this.validateRequest.isValid(principal)) {
+		if (!this.validateRequest.isValid(principal, "exposed")) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 		}
 

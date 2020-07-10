@@ -98,7 +98,7 @@ public class GaenController {
 			@RequestHeader(value = "User-Agent", required = true) String userAgent,
 			@AuthenticationPrincipal Object principal) throws InvalidDateException {
 		var now = Instant.now().toEpochMilli();
-		if (!this.validateRequest.isValid(principal)) {
+		if (!this.validateRequest.isValid(principal, "exposed")) {
 			return () -> ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 		}
 		List<GaenKey> nonFakeKeys = new ArrayList<>();
@@ -167,6 +167,10 @@ public class GaenController {
 			@Valid @RequestBody GaenSecondDay gaenSecondDay,
 			@RequestHeader(value = "User-Agent", required = true) String userAgent,
 			@AuthenticationPrincipal Object principal) throws InvalidDateException {
+		if (!this.validateRequest.isValid(principal, "currentDayExposed")) {
+			return () -> ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+		}
+
 		var now = Instant.now().toEpochMilli();
 
 		if (!validationUtils.isValidBase64Key(gaenSecondDay.getDelayedKey().getKeyData())) {

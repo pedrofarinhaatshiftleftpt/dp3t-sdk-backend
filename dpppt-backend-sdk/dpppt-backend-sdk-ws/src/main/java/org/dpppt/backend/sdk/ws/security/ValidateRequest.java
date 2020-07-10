@@ -12,7 +12,7 @@ package org.dpppt.backend.sdk.ws.security;
 
 public interface ValidateRequest {
 
-	public boolean isValid(Object authObject);
+	public boolean isValid(Object authObject, String scope);
 
 	// authObject is the Principal, given from Springboot
 	// others can be any object (currently it is the ExposeeRequest, since we want
