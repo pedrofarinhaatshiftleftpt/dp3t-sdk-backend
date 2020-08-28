@@ -12,7 +12,6 @@ package org.dpppt.backend.sdk.ws.controller;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -80,15 +79,6 @@ public class GaenControllerTest extends BaseControllerTest {
   Long releaseBucketDuration = 7200000L;
 
   private static final Logger logger = LoggerFactory.getLogger(GaenControllerTest.class);
-
-  @Test
-  public void testHello() throws Exception {
-    MockHttpServletResponse response =
-        mockMvc.perform(get("/v1")).andExpect(status().is2xxSuccessful()).andReturn().getResponse();
-
-    assertNotNull(response);
-    assertEquals("Hello from DP3T WS", response.getContentAsString());
-  }
 
   @Test
   public void testActuatorSecurity() throws Exception {
@@ -305,15 +295,8 @@ public class GaenControllerTest extends BaseControllerTest {
 
   @Test
   public void testSecurityHeaders() throws Exception {
-    MockHttpServletResponse response =
-        mockMvc.perform(get("/v1")).andExpect(status().is2xxSuccessful()).andReturn().getResponse();
-    for (var header : headers.keySet()) {
-      assertTrue(response.containsHeader(header));
-      assertEquals(headers.get(header), response.getHeader(header));
-    }
-    var now = UTCInstant.now();
     var midnight = UTCInstant.today();
-    response =
+    MockHttpServletResponse response =
         mockMvc
             .perform(
                 get("/v1/gaen/exposed/" + midnight.minusDays(8).getTimestamp())

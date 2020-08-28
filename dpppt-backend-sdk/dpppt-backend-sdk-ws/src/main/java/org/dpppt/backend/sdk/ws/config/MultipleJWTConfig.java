@@ -17,9 +17,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.time.Duration;
 import org.apache.commons.io.IOUtils;
-import org.dpppt.backend.sdk.data.DPPPTDataService;
 import org.dpppt.backend.sdk.data.RedeemDataService;
-import org.dpppt.backend.sdk.ws.security.DPPTJwtDecoder;
+import org.dpppt.backend.sdk.ws.security.GaenJwtDecoder;
 import org.dpppt.backend.sdk.ws.security.JWTClaimSetConverter;
 import org.dpppt.backend.sdk.ws.security.JWTValidateRequest;
 import org.dpppt.backend.sdk.ws.security.JWTValidator;
@@ -62,8 +61,6 @@ public class MultipleJWTConfig {
 
     @Value("${ws.retentiondays: 14}")
     int retentionDays;
-
-    @Autowired @Lazy DPPPTDataService dataService;
 
     @Autowired @Lazy RedeemDataService redeemDataService;
 
@@ -130,7 +127,7 @@ public class MultipleJWTConfig {
     public JwtDecoder jwtDecoderSecondDay()
         throws InvalidKeySpecException, NoSuchAlgorithmException, IOException {
 
-      var jwtDecoder = new DPPTJwtDecoder(keyVault.get("nextDayJWT").getPublic());
+      var jwtDecoder = new GaenJwtDecoder(keyVault.get("nextDayJWT").getPublic());
       // jwtDecoder.setClaimSetConverter(claimConverterGAEN());
 
       OAuth2TokenValidator<Jwt> defaultValidators = JwtValidators.createDefault();
@@ -190,8 +187,8 @@ public class MultipleJWTConfig {
     public JwtDecoder jwtDecoder()
         throws InvalidKeySpecException, NoSuchAlgorithmException, IOException,
             PublicKeyNoSuitableEncodingFoundException {
-      DPPTJwtDecoder jwtDecoder =
-          new DPPTJwtDecoder(KeyVault.loadPublicKey(loadPublicKey(), "RSA"));
+      GaenJwtDecoder jwtDecoder =
+          new GaenJwtDecoder(KeyVault.loadPublicKey(loadPublicKey(), "RSA"));
 
       OAuth2TokenValidator<Jwt> defaultValidators = JwtValidators.createDefault();
       jwtDecoder.setJwtValidator(
