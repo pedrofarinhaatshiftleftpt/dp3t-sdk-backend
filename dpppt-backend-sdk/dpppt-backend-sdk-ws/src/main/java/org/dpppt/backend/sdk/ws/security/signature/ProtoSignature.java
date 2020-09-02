@@ -32,6 +32,9 @@ import org.dpppt.backend.sdk.model.gaen.GaenKey;
 import org.dpppt.backend.sdk.model.gaen.GaenUnit;
 import org.dpppt.backend.sdk.model.gaen.proto.TemporaryExposureKeyFormat;
 import org.dpppt.backend.sdk.model.gaen.proto.TemporaryExposureKeyFormat.SignatureInfo;
+import org.dpppt.backend.sdk.model.gaen.proto.TemporaryExposureKeyFormat.TemporaryExposureKey;
+import org.dpppt.backend.sdk.model.gaen.proto.TemporaryExposureKeyFormat.TemporaryExposureKey.Builder;
+import org.dpppt.backend.sdk.model.gaen.proto.TemporaryExposureKeyFormat.TemporaryExposureKey.ReportType;
 import org.dpppt.backend.sdk.utils.UTCInstant;
 
 public class ProtoSignature {
@@ -90,7 +93,7 @@ public class ProtoSignature {
     ByteArrayOutputStream hashOut = new ByteArrayOutputStream();
     var digest = MessageDigest.getInstance("SHA256");
     var keyDate = Duration.of(keys.get(0).getRollingStartNumber(), GaenUnit.TenMinutes);
-    var protoFile = getProtoKey(keys, keyDate);
+    var protoFile = getProtoKey(keys, keyDate, false);
 
     zip.putNextEntry(new ZipEntry("export.bin"));
     byte[] protoFileBytes = protoFile.toByteArray();
@@ -169,7 +172,7 @@ public class ProtoSignature {
       }
 
       var keyDate = Duration.of(keys.get(0).getRollingStartNumber(), GaenUnit.TenMinutes);
-      var protoFile = getProtoKey(keys, keyDate);
+      var protoFile = getProtoKey(keys, keyDate, true);
       var zipFileName = new StringBuilder();
 
       zipFileName.append("key_export_").append(group);
@@ -221,18 +224,20 @@ public class ProtoSignature {
   }
 
   private TemporaryExposureKeyFormat.TemporaryExposureKeyExport getProtoKey(
-      List<GaenKey> exposedKeys, Duration batchReleaseTimeDuration) {
+      List<GaenKey> exposedKeys, Duration batchReleaseTimeDuration, boolean debug) {
     var file = TemporaryExposureKeyFormat.TemporaryExposureKeyExport.newBuilder();
 
     var tekList = new ArrayList<TemporaryExposureKeyFormat.TemporaryExposureKey>();
     for (var key : exposedKeys) {
-      var protoKey =
-          TemporaryExposureKeyFormat.TemporaryExposureKey.newBuilder()
+      Builder builder =
+          TemporaryExposureKey.newBuilder()
               .setKeyData(ByteString.copyFrom(Base64.getDecoder().decode(key.getKeyData())))
               .setRollingPeriod(key.getRollingPeriod())
-              .setRollingStartIntervalNumber(key.getRollingStartNumber())
-              .setTransmissionRiskLevel(key.getTransmissionRiskLevel())
-              .build();
+              .setRollingStartIntervalNumber(key.getRollingStartNumber());
+      if (debug) {
+        builder.setReportType(ReportType.CONFIRMED_TEST).setDaysSinceOnsetOfSymptoms(2);
+      }
+      var protoKey = builder.build();
       tekList.add(protoKey);
     }
 
